@@ -1,23 +1,28 @@
-from random import choice as ran
+# ИСПОЛЬЗОВАТЬ: лучше без псевдонима, чем с плохим псевдонимом
+from random import choice
 from typing import Optional
-cod = [200, 403, 404, 500]
+
+codes = [200, 403, 404, 500]
+
+
 class Request:
-    def __init__(self,request: list):
-        self.request = request
-        self.request = ran(self.request)
+    def __init__(self, requests: list):
+        self.code = requests
+        self.code = choice(self.code)
         self.answer = None
+
     def __str__(self):
-        return f'Ответ: {self.request}, описание: {self.answer}'
+        return f'Ответ: {self.code}, описание: {self.answer}'
     
         
-class Handler:
+class CodesHandler:
     """Класс цепочки, запускает обработку данных."""
-    def __init__(self, requwstt: Request):
-        self.requwstt = requwstt
-        self.previous_modifier: Optional[Handler] = None
-        self.next_modifier: Optional[Handler] = None
+    def __init__(self, request: Request):
+        self.request = request
+        self.previous_modifier: Optional[CodesHandler] = None
+        self.next_modifier: Optional[CodesHandler] = None
 
-    def add_modifier(self, handler: 'Handler'):
+    def add_modifier(self, handler: 'CodesHandler'):
         if self.next_modifier is None:
             self.next_modifier = handler
             self.next_modifier.previous_modifier = self
@@ -29,37 +34,46 @@ class Handler:
             self.next_modifier.handle()
 
 
+# ИСПОЛЬЗОВАТЬ: для имён классов используется регистр CamelCase — слова пишутся слитно, каждое с большой буквы
+class Code200(CodesHandler):
+    """Элемент цепочки, проверяет и обрабатывает данные."""
+    def handle(self):
+        if self.request.code == 200:
+            self.request.answer = "Запрос выполнен успешно"
+        super().handle()
 
-class Request_completed_successfully(Handler):
+
+# ИСПОЛЬЗОВАТЬ: слишком длинные имена классов очень неудобны
+class Code403(CodesHandler):
     """Элемент цепочки, проверяет и обрабатывает данные."""
     def handle(self):
-        if self.requwstt.request == 200:
-            self.requwstt.answer = "Запрос выполнен успешно"
+        if self.request.code == 403:
+            self.request.answer = "Сервер понял запрос, но он отказывается его выполнять из-за ограничений доступа для клиента к указанному ресурсу"
         super().handle()
-class Refuses_to_authorize_it(Handler):
+
+
+class Code404(CodesHandler):
     """Элемент цепочки, проверяет и обрабатывает данные."""
     def handle(self):
-        if self.requwstt.request == 403:
-            self.requwstt.answer = "Сервер понял запрос,но он отказывается его выполнять из-за ограниченийв доступе для клиента к указанному ресурсу"
+        if self.request.code == 404:
+            self.request.answer = "Сервер не найден"
         super().handle()
-class The_server_cannot_find_the_data(Handler):
+
+
+class Code500(CodesHandler):
     """Элемент цепочки, проверяет и обрабатывает данные."""
     def handle(self):
-        if self.requwstt.request == 404:
-            self.requwstt.answer = "Сервер не найден"
+        if self.request.code == 500:
+            self.request.answer = "Внутренняя ошибка сервера"
         super().handle()
-class The_server_encountered_an_unexpected_error(Handler):
-    """Элемент цепочки, проверяет и обрабатывает данные."""
-    def handle(self):
-        if self.requwstt.request == 500:
-            self.requwstt.answer = "Внутренняя ошибка сервера"
-        super().handle()
-f = Request(cod)
-p = Handler(f)
-p.add_modifier(Request_completed_successfully(f))
-p.add_modifier(Refuses_to_authorize_it(f))
-p.add_modifier(The_server_cannot_find_the_data(f))
-p.add_modifier(The_server_encountered_an_unexpected_error(f))
+
+
+f = Request(codes)
+p = CodesHandler(f)
+p.add_modifier(Code200(f))
+p.add_modifier(Code403(f))
+p.add_modifier(Code404(f))
+p.add_modifier(Code500(f))
 p.handle()
 print(f)
 
