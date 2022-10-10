@@ -44,6 +44,7 @@ class Code200(CodesHandler):
     def handle(self):
         if self.request.code == 200:
             self.request.answer = "Запрос выполнен успешно"
+        # ИСПРАВИТЬ: а если код ответа на запрос обработан этим классом, то надо ли продолжать обработку?
         super().handle()
 
 
@@ -87,3 +88,5 @@ p.add_modifier(Code500(f))
 p.handle()
 print(f)
 
+
+# ИТОГ: очень хорошо — 10/12
