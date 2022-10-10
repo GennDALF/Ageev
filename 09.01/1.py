@@ -5,6 +5,7 @@ from typing import Optional
 codes = [200, 403, 404, 500]
 
 
+# ДОБАВИТЬ: документацию класса
 class Request:
     def __init__(self, requests: list):
         self.code = requests
@@ -22,6 +23,7 @@ class CodesHandler:
         self.previous_modifier: Optional[CodesHandler] = None
         self.next_modifier: Optional[CodesHandler] = None
 
+    # ДОБАВИТЬ: документацию метода
     def add_modifier(self, handler: 'CodesHandler'):
         if self.next_modifier is None:
             self.next_modifier = handler
@@ -29,6 +31,7 @@ class CodesHandler:
         else:
             self.next_modifier.add_modifier(handler)
 
+    # ДОБАВИТЬ: документацию метода
     def handle(self):
         if self.next_modifier:
             self.next_modifier.handle()
@@ -37,6 +40,7 @@ class CodesHandler:
 # ИСПОЛЬЗОВАТЬ: для имён классов используется регистр CamelCase — слова пишутся слитно, каждое с большой буквы
 class Code200(CodesHandler):
     """Элемент цепочки, проверяет и обрабатывает данные."""
+    # ДОБАВИТЬ: документацию метода
     def handle(self):
         if self.request.code == 200:
             self.request.answer = "Запрос выполнен успешно"
@@ -46,6 +50,7 @@ class Code200(CodesHandler):
 # ИСПОЛЬЗОВАТЬ: слишком длинные имена классов очень неудобны
 class Code403(CodesHandler):
     """Элемент цепочки, проверяет и обрабатывает данные."""
+    # ДОБАВИТЬ: документацию метода
     def handle(self):
         if self.request.code == 403:
             self.request.answer = "Сервер понял запрос, но он отказывается его выполнять из-за ограничений доступа для клиента к указанному ресурсу"
@@ -54,6 +59,7 @@ class Code403(CodesHandler):
 
 class Code404(CodesHandler):
     """Элемент цепочки, проверяет и обрабатывает данные."""
+    # ДОБАВИТЬ: документацию метода
     def handle(self):
         if self.request.code == 404:
             self.request.answer = "Сервер не найден"
@@ -62,10 +68,14 @@ class Code404(CodesHandler):
 
 class Code500(CodesHandler):
     """Элемент цепочки, проверяет и обрабатывает данные."""
+    # ДОБАВИТЬ: документацию метода
     def handle(self):
         if self.request.code == 500:
             self.request.answer = "Внутренняя ошибка сервера"
         super().handle()
+
+
+# КОММЕНТАРИЙ: прописывание документации и комментариев очень помогает систематизировать своё понимание кода, что особенно полезно во время обучения
 
 
 f = Request(codes)
